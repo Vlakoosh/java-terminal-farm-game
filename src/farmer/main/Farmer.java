@@ -16,6 +16,7 @@ public class Farmer {
 
 
 
+
     int sprayAmount;
     int fertilizerAmount;
 
