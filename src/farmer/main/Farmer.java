@@ -12,6 +12,7 @@ public class Farmer {
     int maxCrops;
 
     Map<String, Integer> seedInventory;
+    Map<String, Integer> itemInventory;
 
     int sprayAmount;
     int fertilizerAmount;
@@ -26,9 +27,11 @@ public class Farmer {
         this.upgradeLevel = 1;
 
         seedInventory = new HashMap<>();
-        seedInventory.put("Carrot", 0);
-        seedInventory.put("Fertilizer", 0);
-        seedInventory.put("Spray", 0);
+        seedInventory.put("carrot", 0);
+        seedInventory.put("potato", 1);
+        itemInventory = new HashMap<>();
+        itemInventory.put("fertilizer", 0);
+        itemInventory.put("spray", 0);
 
         this.maxCrops = 2;
         crops = new ArrayList<>();
@@ -75,7 +78,7 @@ public class Farmer {
                     |\\//|\\/|/\\//\\||//|\\|||/\\//|//\\||\\//||//|\\\\|\\||\\/|/\\//\\||////|//\\/
                     """);
         }
-        if (upgradeLevel == 2){
+        if (upgradeLevel == 2) {
             System.out.println("""
                                                         .
                                                       .'.`.
@@ -126,11 +129,42 @@ public class Farmer {
         }
 
         Scanner scanner = new Scanner(System.in);
-        String command = scanner.nextLine().toUpperCase();
+        String commands = scanner.nextLine().toUpperCase();
+        String command = commands.split(" ")[0];
+        String[] args = commands.toLowerCase().split(" ");
 
-        switch (command){
+        switch (command) {
             case "PLANT" -> {
-                System.out.println("- (plant) crops");
+                if (crops.size() == maxCrops){
+                    System.out.println("You don't have enough space to plant anything. \nEither harvest or destroy a plant to make space, or buy more land in upgrades store");
+                    break;
+                }
+                if (!hasSeeds()) {
+                    System.out.println("You do not have any seeds in your inventory. Buy some at the store");
+                } else if (args.length > 1) {
+                    if (seedInventory.get(args[1]) != null && seedInventory.get(args[1]) > 0) {
+                        System.out.println("You planted " + args[1]);
+                        crops.add(new Crop());
+                    } else {
+                        System.out.println("You cannot plant " + args[1] + ". Either this crop doesn't exist or you don't have enough of it");
+                    }
+
+                } else {
+                    System.out.println("\nWhat would you like to plant?\n");
+                    for (Map.Entry<String, Integer> seed : seedInventory.entrySet()) {
+                        if (seed.getValue() > 0) {
+                            System.out.println("- " + seed.getKey().toLowerCase() + " (you have " + seed.getValue() + " left)");
+                        }
+                    }
+                    String cropChoice = scanner.nextLine().toLowerCase();
+                    if (seedInventory.get(cropChoice) != null && seedInventory.get(cropChoice) > 0) {
+                        System.out.println("You planted " + cropChoice);
+                        crops.add(new Crop());
+                    } else {
+                        System.out.println("You cannot plant " + cropChoice + ". Either this crop doesn't exist or you don't have enough of it");
+                    }
+
+                }
             }
             case "WATER" -> {
                 System.out.println("- (water) crops");
@@ -161,6 +195,13 @@ public class Farmer {
         for (int i = 0; i < 30; i++) {
             System.out.println();
         }
+    }
+
+    public boolean hasSeeds() {
+        for (Map.Entry<String, Integer> seed : seedInventory.entrySet()) {
+            if (seed.getValue() > 0) return true;
+        }
+        return false;
     }
 
 }
