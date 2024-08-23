@@ -15,6 +15,7 @@ public class Farmer {
     Map<String, Integer> itemInventory;
 
 
+
     int sprayAmount;
     int fertilizerAmount;
 
